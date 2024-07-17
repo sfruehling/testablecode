@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 public class AnotherService {
 
 
-
     public String getResult(String path) {
         try {
             String timestampStr = readFile(path);
@@ -32,9 +31,13 @@ public class AnotherService {
     }
 
     private static String convertToISO8601(long timestamp) {
-        Instant instant = Instant.ofEpochMilli(timestamp);
+        Instant instant = Instant.ofEpochSecond(timestamp);
         LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+
+        if (dateTime.getMinute() > 30) {
+            formatter = DateTimeFormatter.ofPattern("MMM");
+        }
         return dateTime.format(formatter);
     }
 }
