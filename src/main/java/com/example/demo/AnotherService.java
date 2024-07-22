@@ -11,11 +11,17 @@ import java.time.format.DateTimeFormatter;
 public class AnotherService {
 
 
-    public String getResult(String path) {
+    public String getResult(String path1, String path2) {
         try {
-            String timestampStr = readFile(path);
-            long timestamp = Long.parseLong(timestampStr.trim());
-            return convertToISO8601(timestamp);
+            long timestampStr1 = readFile(path1);
+            long timestampStr2 = readFile(path2);
+            if(timestampStr2 % 2 == 0){
+                return convertToISO8601(timestampStr1);
+            }
+            if(timestampStr1 % 5 == 0) {
+                return convertToISO8601(timestampStr2);
+            }
+            return convertToISO8601(timestampStr1+timestampStr2);
         } catch (IOException e) {
             System.err.println("Fehler beim Lesen der Datei: " + e.getMessage());
         } catch (NumberFormatException e) {
@@ -24,9 +30,9 @@ public class AnotherService {
         return null;
     }
 
-    private static String readFile(String filePath) throws IOException {
+    private static long readFile(String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            return br.readLine();
+            return Long.parseLong(br.readLine().trim());
         }
     }
 
@@ -37,6 +43,9 @@ public class AnotherService {
 
         if (dateTime.getMinute() > 30) {
             formatter = DateTimeFormatter.ofPattern("MMM");
+        }
+        if(dateTime.getHour() %2 == 0){
+            formatter = DateTimeFormatter.ofPattern("yyyy");
         }
         return dateTime.format(formatter);
     }
