@@ -43,8 +43,7 @@ public class AnotherService {
 
         if (dateTime.getMinute() > 30) {
             formatter = DateTimeFormatter.ofPattern("MMM");
-        }
-        if(dateTime.getHour() %2 == 0){
+        } else if (dateTime.getHour() %2 == 0){
             formatter = DateTimeFormatter.ofPattern("yyyy");
         }
         return dateTime.format(formatter);
