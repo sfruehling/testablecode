@@ -46,6 +46,9 @@ public class AnotherService {
         } else if (dateTime.getHour() %2 == 0){
             formatter = DateTimeFormatter.ofPattern("yyyy");
         }
+        if(dateTime.getHour() %2 == 0){
+            formatter = DateTimeFormatter.ofPattern("yyyy");
+        }
         return dateTime.format(formatter);
     }
 }
