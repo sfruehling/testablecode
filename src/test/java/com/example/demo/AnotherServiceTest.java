@@ -2,210 +2,93 @@ package com.example.demo;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("FieldCanBeLocal")
 @ExtendWith(OutputCaptureExtension.class)
 class AnotherServiceTest {
 
-    private final String TIMESTAMP_20240717_162926 = "1721233766";
-    private final String TIMESTAMP_ENDING_ON5_20240717_073135 = "1721194295";
+    private static final long EVEN_TIMESTAMP = 1721233766L;
+    private static final long ODD_TIMESTAMP = 1721233767L;
+    private static final long MULTIPLE_OF_5_TIMESTAMP = 1721194295L;
 
-    private final String TIMESTAMP_20240717_162927 = "1721233767";
-    private final String TIMESTAMP_20240717_163527 = "1721190927";
-    private final String TIMESTAMP_20240717_072927 = "1721194167";
-    private final String TIMESTAMP_20240717_073127 = "1721194287";
-    private final String TIMESTAMP_20240717_070127 = "1721192487";
+    private final MyFormatter myFormatter = mock(MyFormatter.class);
+    private final MyFileReader myFileReader = mock(MyFileReader.class);
 
-    @TempDir
-    private Path tempDir;
-
-    private final AnotherService anotherService = new AnotherService();
+    private final AnotherService anotherService = new AnotherService(myFileReader, myFormatter);
 
 
     @Test
-    void evenFile2Timestamp_WithFile1TimeStampLower30MinAndEvenHour_ReturnsYearOfFile1Content() throws IOException {
-        final String evenTimestamp1 = createTempFileWithContent(TIMESTAMP_20240717_162927)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
+    void oddFile1_evenFile2_returnsOddTimeStamp() throws IOException {
+        when(myFileReader.readFile("odd")).thenReturn(ODD_TIMESTAMP);
+        when(myFileReader.readFile("even")).thenReturn(EVEN_TIMESTAMP);
+        when(myFormatter.convertToISO8601(ODD_TIMESTAMP)).thenReturn("result");
 
-        assertThat(anotherService.getResult(evenTimestamp1, tempFile2)).isEqualTo("2024");
+        String result = anotherService.getResult("odd", "even");
+
+        assertThat(result).isEqualTo("result");
     }
 
     @Test
-    void evenFile2Timestamp_WithFile1TimeStampLower30MinAndOddHour_ReturnsISOOfFile1Content() throws IOException {
-        final String evenTimestamp1 = createTempFileWithContent(TIMESTAMP_20240717_072927)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
+    void multipleOf5File1_oddFile2_returnsOddTimeStamp() throws IOException {
+        when(myFileReader.readFile("multipleOf5")).thenReturn(MULTIPLE_OF_5_TIMESTAMP);
+        when(myFileReader.readFile("odd")).thenReturn(ODD_TIMESTAMP);
+        when(myFormatter.convertToISO8601(ODD_TIMESTAMP)).thenReturn("result");
 
-        assertThat(anotherService.getResult(evenTimestamp1, tempFile2)).isEqualTo("2024-07-17T07:29:27");
+        String result = anotherService.getResult("multipleOf5", "odd");
+
+        assertThat(result).isEqualTo("result");
     }
 
     @Test
-    void evenFile2Timestamp_WithFile1TimeStampGreater30MinAndEvenHourReturnsMonthOfFile1Content() throws IOException {
-        final String evenTimestamp1 = createTempFileWithContent(TIMESTAMP_20240717_163527)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
+    void evenFile1_oddFile2_returnsSum() throws IOException {
+        when(myFileReader.readFile("even")).thenReturn(EVEN_TIMESTAMP);
+        when(myFileReader.readFile("odd")).thenReturn(ODD_TIMESTAMP);
+        when(myFormatter.convertToISO8601(EVEN_TIMESTAMP + ODD_TIMESTAMP)).thenReturn("result");
 
-        assertThat(anotherService.getResult(evenTimestamp1, tempFile2)).isEqualTo("Juli");
-    }
+        String result = anotherService.getResult("even", "odd");
 
-    @Test
-    void evenFile2Timestamp_WithFile1TimeStampGreater30MinAndOddHourReturnsMonthOfFile1Content() throws IOException {
-        final String evenTimestamp1 = createTempFileWithContent(TIMESTAMP_20240717_073127)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
-
-        assertThat(anotherService.getResult(evenTimestamp1, tempFile2)).isEqualTo("Juli");
-    }
-
-    @Test
-    void File1TimestampEndingOn5_WithFile2TimeStampGreater30MinAndEvenHourReturnsMonthOfFile1Content() throws IOException {
-        final String evenTimestamp1 = createTempFileWithContent(TIMESTAMP_ENDING_ON5_20240717_073135)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_163527)
-                .toAbsolutePath()
-                .toString();
-
-        assertThat(anotherService.getResult(evenTimestamp1, tempFile2)).isEqualTo("Juli");
-    }
-
-    @Test
-    void File1TimestampEndingOn5_WithFile2TimeStampLower30MinAndEvenHourReturnsYearOfFile1Content() throws IOException {
-        final String tempFile = createTempFileWithContent(TIMESTAMP_ENDING_ON5_20240717_073135)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162927)
-                .toAbsolutePath()
-                .toString();
-
-        assertThat(anotherService.getResult(tempFile, tempFile2)).isEqualTo("2024");
-    }
-
-    @Test
-    void File1TimestampEndingOn5_WithFile2TimeStampLower30MinAndOddHourReturnsIsoOfFile1Content() throws IOException {
-        final String tempFile = createTempFileWithContent(TIMESTAMP_ENDING_ON5_20240717_073135)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_072927)
-                .toAbsolutePath()
-                .toString();
-
-        assertThat(anotherService.getResult(tempFile, tempFile2)).isEqualTo("2024-07-17T07:29:27");
+        assertThat(result).isEqualTo("result");
     }
 
     @Test
     void willReturnNullOnFile1NotFound(CapturedOutput output) throws IOException {
-        final String tempFile = createTempFileWithContent("1721252866")
-                .toAbsolutePath() + "willNotFindIt";
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
+        when(myFileReader.readFile("path1")).thenThrow(new IOException());
 
-        assertThat(anotherService.getResult(tempFile, tempFile2)).isNull();
+        assertThat(anotherService.getResult("path1", "path2")).isNull();
         assertThat(output.getAll()).contains("Fehler beim Lesen der Datei: ");
     }
 
     @Test
     void willReturnNullOnFile2NotFound(CapturedOutput output) throws IOException {
-        final String tempFile = createTempFileWithContent("1721252866")
-                .toAbsolutePath().toString() ;
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath() + "willNotFindIt";
+        when(myFileReader.readFile("path1")).thenReturn(ODD_TIMESTAMP);
+        when(myFileReader.readFile("path2")).thenThrow(new IOException());
 
-        assertThat(anotherService.getResult(tempFile, tempFile2)).isNull();
+        assertThat(anotherService.getResult("path1", "path2")).isNull();
         assertThat(output.getAll()).contains("Fehler beim Lesen der Datei: ");
     }
 
     @Test
     void returnsNullIfFile1ContentCannotBeRead(CapturedOutput output) throws IOException {
-        final String tempFile = createTempFileWithContent("canNotReadContent")
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
+        when(myFileReader.readFile("path1")).thenThrow(new NumberFormatException());
 
-        assertThat(anotherService.getResult(tempFile,tempFile2)).isNull();
+        assertThat(anotherService.getResult("path1", "path2")).isNull();
         assertThat(output.getAll()).contains("Ungültiger Timestamp: ");
     }
 
     @Test
     void returnsNullIfFile2ContentCannotBeRead(CapturedOutput output) throws IOException {
-        final String tempFile = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent("canNotReadContent")
-                .toAbsolutePath()
-                .toString();
+        when(myFileReader.readFile("path1")).thenReturn(ODD_TIMESTAMP);
+        when(myFileReader.readFile("path2")).thenThrow(new NumberFormatException());
 
-        assertThat(anotherService.getResult(tempFile,tempFile2)).isNull();
+        assertThat(anotherService.getResult("path1", "path2")).isNull();
         assertThat(output.getAll()).contains("Ungültiger Timestamp: ");
-    }
-
-    @Test
-    void File1TimestampNotEndingOn5_WithFile2Odd_willReturnMonthOfSum() throws IOException {
-        final String tempFile = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_162927)
-                .toAbsolutePath()
-                .toString();
-
-        assertThat(anotherService.getResult(tempFile,tempFile2)).isEqualTo("Feb.");
-    }
-    @Test
-    void File1TimestampNotEndingOn5_WithFile2Odd_willReturnYearOfSum() throws IOException {
-        final String tempFile = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent(TIMESTAMP_20240717_070127)
-                .toAbsolutePath()
-                .toString();
-
-        assertThat(anotherService.getResult(tempFile,tempFile2)).isEqualTo("2079");
-    }
-
-    @Test
-    void File1TimestampNotEndingOn5_WithFile2Odd_willReturnIsoOfSum() throws IOException {
-        final String tempFile = createTempFileWithContent(TIMESTAMP_20240717_162926)
-                .toAbsolutePath()
-                .toString();
-        final String tempFile2 = createTempFileWithContent("1721195587")
-                .toAbsolutePath()
-                .toString();
-
-        assertThat(anotherService.getResult(tempFile,tempFile2)).isEqualTo("2079-01-31T23:22:33");
-    }
-
-
-    private Path createTempFileWithContent(String filecontent) throws IOException {
-        String filename = UUID.randomUUID().toString();
-        final Path tempFile = Files.createFile(tempDir.resolve(filename+".txt"));
-
-        Files.writeString(tempFile, filecontent);
-        return tempFile;
     }
 }
