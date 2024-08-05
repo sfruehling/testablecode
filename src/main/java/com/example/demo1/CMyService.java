@@ -2,12 +2,12 @@ package com.example.demo1;
 
 import com.example.demo1.notsoimportant.MyDateFormatter;
 
-public class C_MyService {
+public class CMyService {
 
 
     private final MyDateFormatter myDateFormatter;
 
-    public C_MyService(MyDateFormatter myDateFormatter) {
+    public CMyService(MyDateFormatter myDateFormatter) {
         this.myDateFormatter = myDateFormatter;
     }
 

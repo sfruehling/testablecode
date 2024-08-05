@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class A_ShoppingCartTest {
+class AShoppingCartTest {
 
-    private final A_ShoppingCart shoppingCart = new A_ShoppingCart();
+    private final AShoppingCart shoppingCart = new AShoppingCart();
 
 
     @Test
