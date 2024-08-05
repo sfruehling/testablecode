@@ -1,6 +1,6 @@
 package com.example.demo1;
 
-public class StringManipulator {
+public class B_StringManipulator {
     public String reverseString(String s) {
         return new StringBuilder(s).reverse().toString();
     }
