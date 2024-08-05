@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class MyServiceTest {
+class C_MyServiceTest {
 
     private static final long EVEN_TIMESTAMP = 1721233766L;
     private static final long ODD_TIMESTAMP = 1721233767L;
@@ -18,7 +18,7 @@ class MyServiceTest {
 
 
     private final MyDateFormatter myDateFormatter = mock(MyDateFormatter.class);
-    private final MyService myService = new MyService(myDateFormatter);
+    private final C_MyService myService = new C_MyService(myDateFormatter);
 
     @ParameterizedTest
     @MethodSource("provideArguments")

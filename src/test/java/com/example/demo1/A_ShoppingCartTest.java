@@ -3,11 +3,10 @@ package com.example.demo1;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-class ShoppingCartTest {
+class A_ShoppingCartTest {
 
-    private final ShoppingCart shoppingCart = new ShoppingCart();
+    private final A_ShoppingCart shoppingCart = new A_ShoppingCart();
 
 
     @Test
