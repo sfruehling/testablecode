@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ShoppingCartTest {
 
-    private final ShoppingCart shoppingCart = new ShoppingCart();
+    private final AShoppingCart shoppingCart = new AShoppingCart();
 
 
     @Test

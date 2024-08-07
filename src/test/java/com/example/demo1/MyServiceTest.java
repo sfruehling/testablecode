@@ -18,7 +18,7 @@ class MyServiceTest {
 
 
     private final MyDateFormatter myDateFormatter = mock(MyDateFormatter.class);
-    private final MyService myService = new MyService(myDateFormatter);
+    private final CMyService myService = new CMyService(myDateFormatter);
 
     @ParameterizedTest
     @MethodSource("provideArguments")

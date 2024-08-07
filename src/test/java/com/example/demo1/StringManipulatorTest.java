@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StringManipulatorTest {
-    private final StringManipulator stringManipulator = new StringManipulator();
+    private final BStringManipulator stringManipulator = new BStringManipulator();
 
     @Test
     void reverseString_isEmpty_onEmptyString() {
