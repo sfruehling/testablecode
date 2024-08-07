@@ -17,4 +17,11 @@ public class Foo {
     public int magic(int input) {
         return (int) (Math.random() * input);
     }
+
+    public void voidMethod() {
+        double random = Math.random();
+        if(random > 0.5) {
+            throw new RuntimeException("Poor Boy...");
+        }
+    }
 }
