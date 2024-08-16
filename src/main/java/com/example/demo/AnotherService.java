@@ -30,13 +30,13 @@ public class AnotherService {
         return null;
     }
 
-    private static long readFile(String filePath) throws IOException {
+    private long readFile(String filePath) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             return Long.parseLong(br.readLine().trim());
         }
     }
 
-    private static String convertToISO8601(long timestamp) {
+    private String convertToISO8601(long timestamp) {
         Instant instant = Instant.ofEpochSecond(timestamp);
         LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
