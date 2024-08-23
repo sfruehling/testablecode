@@ -3,6 +3,9 @@ weitere Ideen:
 * Test Logging
 * Test Filehandling (@TemDir)
 * Mocking
+  * argument cator
+  * matcher / real value
+  * verifyNoMoreInteraction
 * AssertJ (mini-kurs)
 * SpringBoot Test Knowhow
 * Testing Dates
